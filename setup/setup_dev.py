@@ -30,4 +30,16 @@ try:
 except FileNotFoundError:
     print("Provide a valid path")
     sys.exit(1)
+    
+is_installed =  utils.verify_installation(commands, use_path)
+if not is_installed:
+    print(f"{cmd_key} is not installed. Installation procedure is not yet implemented...")
+    sys.exit(1)
+
+print(f"{cmd_key} is installed. Setup process is not yet implemented")
+
+
+
+
+
 

@@ -1,8 +1,18 @@
+"""Build and configuration script for the package distribution."""
+
 import subprocess
 import platform
 
-def verify_installation(commands:list[str], use_path:str):
-    # Modified line: injects target directory based on the boolean path flag
+def verify_installation(commands:list[str], use_path:str) -> str | None:
+    """Verifies tool installation at the specified path.
+
+    Parameters:
+        commands (list[str]): Specific command to run based on the tool.
+        use_path (str): Path to run the command.
+
+    Returns:
+        str | None: The version string if installed, otherwise None.
+    """
 
     for command in commands:
         cmd = command.split()
@@ -16,10 +26,15 @@ def verify_installation(commands:list[str], use_path:str):
         )
 
         if result.returncode == 0:
-            print("Output:", result.stdout)
-            return True
+            return result.stdout
 
-    return False
+import platform
 
 def get_os():
+    """Get the name of the host operating system.
+
+    Returns:
+        str: Name of the operating system (e.g., 'Windows', 'Linux', 'Darwin').
+    """
     return platform.system()
+
