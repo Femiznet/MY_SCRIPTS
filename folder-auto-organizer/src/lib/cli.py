@@ -1,4 +1,5 @@
 import argparse
+from .exceptions import InvalidDirectoryError
 from pathlib import Path
 
 def get_directory():
@@ -12,7 +13,7 @@ def get_directory():
     directory:Path = parser.parse_args().dir
 
     if not directory.is_dir():
-        raise NotADirectoryError(f"Path:{directory.name} is not a directory")
+        raise InvalidDirectoryError(f"{directory.name} is not a valid directory")
 
     return directory
 

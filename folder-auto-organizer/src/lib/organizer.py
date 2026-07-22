@@ -1,8 +1,23 @@
 from pathlib import Path
 from .config import FILE_CATEGORIES, OTHERS
-from .utils import get_file_extension, move_into_folder
+from .exceptions import InvalidDirectoryError
+import shutil
 
-def _get_file_category(file_extension: str|None) -> str:
+
+def _validate_file(file:Path) -> None:
+    if file.is_dir():
+        raise IsADirectoryError(f"{file} is a directory")
+
+
+def _move_into_folder(file:Path, folder_name:str) -> str | Path:
+
+    folder = file.parent / folder_name
+    folder.mkdir(exist_ok=True)
+
+    return shutil.move(file, folder)
+
+
+def get_file_category(file_extension: str|None) -> str:
     if not file_extension:
         return OTHERS
     
@@ -12,14 +27,23 @@ def _get_file_category(file_extension: str|None) -> str:
 
     return OTHERS
 
-
 def organize_folder(folder:Path) -> None:
+    try:
 
-    for file in folder.iterdir():
-        try:
-            file_ext = get_file_extension(file)
-            file_category = _get_file_category(file_ext)
+        for file in folder.iterdir():
+            
+            try:
 
-            move_into_folder(file, file_category)
-        except IsADirectoryError:
-            continue
+                _validate_file(file)
+
+                file_ext = file.suffix
+                file_category = get_file_category(file_ext)
+
+                _move_into_folder(file, file_category)
+
+            except IsADirectoryError:
+                continue
+            
+    except (FileNotFoundError, NotADirectoryError):
+        raise InvalidDirectoryError(f"{folder} is not a valid directory")
+

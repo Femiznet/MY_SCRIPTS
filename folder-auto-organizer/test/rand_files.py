@@ -25,12 +25,16 @@ EXTENSIONS: list[str] = [
 ]
 
 
-def _generate_random_filename() -> str:
+def _generate_random_file(path:Path, dir:bool) -> None:
     """Generate a random filename with a random extension."""
     name_length = random.randint(5, 12)
     name = "".join(random.choices(string.ascii_lowercase, k=name_length))
-    ext = random.choice(EXTENSIONS)
-    return f"{name}{ext}"
+    if not dir:
+        ext = random.choice(EXTENSIONS)
+        file = path / f"{name}{ext}"
+        return file.touch()
+    
+    return (path / name).mkdir(exist_ok=True)
 
 
 def _generate_files(count: int, output_dir: Path) -> None:
@@ -38,9 +42,8 @@ def _generate_files(count: int, output_dir: Path) -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
 
     for i in range(count):
-        file_path = output_dir / _generate_random_filename()
-        file_path.write_text(f"This is test file number {i + 1}.")
-
+        choice = i % 2 == 0
+        _generate_random_file(output_dir, dir=choice)
 
 
 def create_random_files(dirname:str, count:int) -> None:
